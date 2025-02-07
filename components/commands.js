@@ -67,7 +67,7 @@ export function giveBlessing(input, referencePlayer, hasBlessing) {
 		let blessingArray = hasBlessing;
 		blessingArray[referencePlayer - 1] = true;
 
-		return [`Player ${referencePlayer} has been given city's blessing.`, blessingArray]
+		return [`Player ${referencePlayer} has been given the city's blessing.`, blessingArray]
 
 		// If the user only says "City's blessing", then read out who has the city's blessing
 	} else {
