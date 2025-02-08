@@ -1,6 +1,15 @@
 // Imports json file
 import symbols from '../json files/symbology.json' with { type: "json"};
 
+// Replaces characters from the transcript before the card is searched
+export function transcriptReplace(input){
+	// Replaces "are" with "r" and "you" with "u" (for Ur-Dragon)
+	input = input.replace(/\bare\b/g, "r");
+	input = input.replace(/\byou\b/g, "u");
+
+	return input
+}
+
 // Replaces characters that are not symbols
 export function customReplace(input) {
 	// Replaces − with -

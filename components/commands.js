@@ -149,3 +149,33 @@ export function editCounters(input, referencePlayer, referenceData, referenceCou
 		return [`Player ${referencePlayer}'s ${referenceCounter} is ${referenceData}.`, referenceData]
 	}
 }
+
+export function dayNight(input, dayState){
+	// If the user says "day night"
+	if(input[0] == "day" && input[1] == "night"){
+		return [`It is currently ${dayState}.`, dayState]
+
+	// If the user says the command "day"
+	}else if(input[0] == "day"){
+		// If the user says "day" but it is already day
+		if(dayState == "day"){
+			return ["It is already day.", dayState]
+
+		// If the user says "day" and it is currently night
+		}else if(dayState == "night"){
+			return ["It is now day.", "day"]
+		}
+
+	// If the user says the command "night"
+	}else if(input[0] == "night"){
+		// If the user says "night" and it is currently day
+		if(dayState == "day"){
+			return ["It is now night.", "night"]
+
+		// If the user says "night" but it is already night
+		}else if(dayState == "night"){
+			return ["It is already night.", dayState]
+
+		}
+	}
+}

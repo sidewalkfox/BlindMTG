@@ -37,6 +37,10 @@ A user may create a custom counter using the command `counter create [name of co
 
 By default, a health counter will be created, and a starting health value will be added when the user starts a game using the `start` command. The health counter can be edited the same way a custom counter can be.
 
+### Day/night
+
+A user can change the day state to day or the day state to night by using the `day` command or the `night` command respectivly. To check the current day state, a user can use the `day night` command.
+
 ## Starting a game
 
 By saying the command `start`, BlindMTG will ask for the number of players and the starting health of all players. The health counter will be set at the starting health. Then, BlindMTG will choose a random player to go first. Starting a game will remove all counters (except for health) and reset monarch and city's blessing values.
@@ -51,8 +55,8 @@ By saying the command `start`, BlindMTG will ask for the number of players and t
 - Check who is monarch: `Monarch`
 
 #### City's blessing
-- Give city's blessing: `City's blessing player [player number]`
-- Check who has the city's blessing: `City's blessing`
+- Give city's blessing: `City's Blessing player [player number]`
+- Check who has the city's blessing: `City's Blessing`
 
 #### Custom counters
 - Create a new counter: `Counter create [counter name (one word max)]`
@@ -66,6 +70,11 @@ By saying the command `start`, BlindMTG will ask for the number of players and t
 - Subtract from health: `Health player [player number] minus [number to subtract]`
 - Set health: `Health player [player number] set [number to add]`
 - Get health value: `Health player [player number]`
+
+#### Day/Night
+- Set day state to day: `Day`
+- Set day state to night: `Night`
+- Get day state: `Day night`
 
 #### Starting a game
 - Start game: `Start`

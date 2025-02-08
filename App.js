@@ -7,9 +7,10 @@ import * as NavigationBar from 'expo-navigation-bar'; //https://docs.expo.dev/ve
 
 import { wordsToNumbers } from "words-to-numbers"; //https://www.npmjs.com/package/words-to-numbers
 
-import { rollDice, setMonarch, giveBlessing, createCounters, editCounters } from './components/commands';
+import { rollDice, setMonarch, giveBlessing, createCounters, editCounters, dayNight } from './components/commands';
 import { cardRequest } from './components/commandRunner';
 import { speechParser } from './components/speechParser';
+import { transcriptReplace } from './components/dictionary';
 
 export default function App() {
   // Player count
@@ -25,6 +26,9 @@ export default function App() {
   const [counters, setCounters] = useState({
     "health": [],
   });
+
+  // Day/Night
+  const [dayState, setDayState] = useState("day");
 
   // Start state
   const [startState, setStartState] = useState(0);
@@ -113,7 +117,7 @@ export default function App() {
     // Changes listen function based on if it was a quick or long press
     if (pressState == "long") {
       // Requests card data from API
-      cardRequest(transcript)
+      cardRequest(transcriptReplace(transcript))
         .then(cardData => {
           if (cardData) {
             // Sends card data to the speech parser
@@ -166,9 +170,10 @@ export default function App() {
         // Reverts the start state back to 0
         setStartState(0);
 
-        // Reverts monarch and city's blessing back to default values
+        // Reverts states back to default values
         setCurrentMonarch();
         setHasBlessing([]);
+        setDayState("day");
       }
 
       // Start
@@ -176,13 +181,13 @@ export default function App() {
         startSpeaking("How many players?");
         setStartState(1);
 
-        // Dice roll
+      // Dice roll
       } else if (inputArray[0] == "roll") {
         let diceMax = inputArray[1] ? Number(inputArray[1]) : undefined;
 
         startSpeaking(rollDice(Number(diceMax)))
 
-        // Set monarch
+      // Set monarch
       } else if (inputArray[0] == "monarch") {
         let referencePlayer = inputArray[2] ? Number(inputArray[2]) : undefined;
 
@@ -194,7 +199,7 @@ export default function App() {
         // Sets the newly appointed monarch
         setCurrentMonarch(newMonarch);
 
-        // Set city's blessing
+      // Set city's blessing
       } else if (inputArray[1] == "blessing") {
         let referencePlayer = inputArray[3] ? Number(inputArray[3]) : undefined;
 
@@ -206,7 +211,7 @@ export default function App() {
         // Sets the newly appointed monarch
         setHasBlessing(newBlessing);
 
-        // Edit counters
+      // Edit counters
       } else if (inputArray[0] == "counter") {
         // Runs createCounters by sending the input and the current counter dictionary
         let [counterString, newCounter] = createCounters(inputArray, counters);
@@ -216,7 +221,17 @@ export default function App() {
         // Updates the counters
         setCounters(newCounter);
 
-        // Edit specific counter
+      // Set day/night state
+      } else if (inputArray[0] == "day" || inputArray[0] == "night") {
+        // Runs dayNight by sending the command and the current day state
+        let [dayNightString, newDayNight] = dayNight(inputArray, dayState);
+
+        startSpeaking(dayNightString);
+
+        // Updates day/night state
+        setDayState(newDayNight);
+
+      // Edit specific counter
       } else if (inputArray[0] in counters) {
         let counterDictionary = counters;
         let referenceCounter = inputArray[0];

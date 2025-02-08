@@ -11,6 +11,62 @@ function replaceSymbols(input) {
 	return input
 }
 
+// Gets mana color cost
+function manaColorCost(input){
+	let output = "";
+	let manaCostString = "";
+	let preManaString = "";
+	let manaStringArray = [];
+
+	// Counts mana colors
+	const white = (input.match(/\{W\}/g) || []).length;
+    const blue = (input.match(/\{U\}/g) || []).length;
+    const black = (input.match(/\{B\}/g) || []).length;
+    const red = (input.match(/\{R\}/g) || []).length;
+    const green = (input.match(/\{G\}/g) || []).length;
+
+	// Creates manaCostString
+	// Adds to array amount of each mana color
+	if (white > 0) manaStringArray.push(`${white} white mana`);
+    if (blue > 0) manaStringArray.push(`${blue} blue mana`);
+    if (black > 0) manaStringArray.push(`${black} black mana`);
+    if (red > 0) manaStringArray.push(`${red} red mana`);
+    if (green > 0) manaStringArray.push(`${green} green mana`);
+
+	// Formats array with proper grammar
+	manaCostString = manaStringArray.length > 1 ? manaStringArray.slice(0, -1).join(' ') + " and " + manaStringArray.slice(-1) : manaStringArray[0];
+
+	// Removes all mana color symbols from string
+	preManaString = input.replace(/\{W\}|\{U\}|\{B\}|\{R\}|\{G\}/g, '');
+
+	// Runs the replace symbol function for just the pre mana string
+	preManaString = replaceSymbols(preManaString);
+
+	// Combines non-color mana cost string and color mana cost string
+	// If both strings exist and there is only one mana color
+	if(preManaString && manaCostString && manaStringArray.length == 1){
+		output = `${preManaString} and ${manaCostString}`;
+
+	// If both string exist and there are more than one mana colors
+	}else if(preManaString && manaCostString && manaStringArray.length > 1){
+		output = `${preManaString} ${manaCostString}`;
+
+	// If pre mana string exists and mana cost string does not
+	}else if(preManaString && !manaCostString){
+		output = `${preManaString}`;
+
+	// If mana cost string exists and pre mana cost does not
+	}else if(!preManaString && manaCostString){
+		output = `${manaCostString}`;
+
+	// If neither exist, output "" (this should not be reachable, but just in case)
+	}else{
+		output = "";
+	}
+
+	return output
+}
+
 // Runs checks to make sure text is ready to be output
 function stringPreening(input) {
 	// Checks to make sure text is not undefined
@@ -33,7 +89,7 @@ function cardFaceBuilder(cardData) {
 	cardName = stringPreening(cardData.name);
 
 	// Mana count
-	let manaCount = stringPreening(cardData.mana_cost);
+	let manaCount = manaColorCost(cardData.mana_cost);
 	manaCount = manaCount ? ` costs ${manaCount}` : "";
 
 	// Card type
@@ -60,6 +116,7 @@ function cardFaceBuilder(cardData) {
 
 	// Puts together and returns the final string
 	let outputString = `${cardName}${manaCount}\n${typeLine}\n${description}\n${powerTough}${loyalty}${defense}`
+
 	return outputString;
 }
 
