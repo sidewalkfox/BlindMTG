@@ -83,3 +83,9 @@ By saying the command `start`, BlindMTG will ask for the number of players and t
 - Settings menu
 - IOS support
 - Offline mode
+
+## Known Bugs
+- After numerous taps, audio will stop playing entirely
+- Spam tapping the screen causes app to stop listening
+- Long delay between tapping screen and audio playing
+- Swiping up to show navigation bar is also treated at tapping the screen

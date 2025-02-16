@@ -15,7 +15,6 @@ eas.json
 commands.txt
 assets/editable/
 audio/editable/
-builds/
 
 # Native
 android/

@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { StyleSheet, Pressable, StatusBar } from 'react-native';
-import { ExpoSpeechRecognitionModule, useSpeechRecognitionEvent } from 'expo-speech-recognition'; //https://www.npmjs.com/package/expo-speech-recognition
+import { StyleSheet, Pressable, StatusBar, Platform } from 'react-native';
+import { ExpoSpeechRecognitionModule, useSpeechRecognitionEvent, getSupportedLocales } from 'expo-speech-recognition'; //https://www.npmjs.com/package/expo-speech-recognition
 import * as textToSpeech from 'expo-speech'; //https://docs.expo.dev/versions/latest/sdk/speech/
 import { Audio } from "expo-av"; //https://docs.expo.dev/versions/latest/sdk/av/
-import * as NavigationBar from 'expo-navigation-bar'; //https://docs.expo.dev/versions/latest/sdk/navigation-bar/
+import ImmersiveMode from 'react-native-immersive-mode'; //https://www.npmjs.com/package/react-native-immersive-mode
 
 import { wordsToNumbers } from "words-to-numbers"; //https://www.npmjs.com/package/words-to-numbers
 
@@ -51,11 +51,11 @@ export default function App() {
     let sound;
 
     // Select the sound file based on input
-    if (soundFile === "recording") {
+    if (soundFile == "recording") {
       ({ sound } = await Audio.Sound.createAsync(require("./audio/Recording.wav")));
-    } else if (soundFile === "card") {
+    } else if (soundFile == "card") {
       ({ sound } = await Audio.Sound.createAsync(require("./audio/Card.wav")));
-    } else if (soundFile === "aborted") {
+    } else if (soundFile == "aborted") {
       ({ sound } = await Audio.Sound.createAsync(require("./audio/Aborted.wav")));
     }
 
@@ -84,9 +84,9 @@ export default function App() {
   // Background color state
   const [bgColor, setBgColor] = useState('#000000');
 
-  // Makes navigation bar only show when swiped up
-  NavigationBar.setBehaviorAsync('overlay-swipe')
-  NavigationBar.setVisibilityAsync("hidden");
+  // Immersive mode
+  ImmersiveMode.fullLayout(true);
+  ImmersiveMode.setBarMode('Full');
 
   // Speech to text states
   const [transcript, setTranscript] = useState("");
@@ -275,12 +275,36 @@ export default function App() {
       return;
     }
 
+    // I had a massive bug here for a while so I'm leaving this comment in case anyone else runs into it
+    // On my phone (Pixel 5a) I had en-US installed for offline use
+    // This required requiresOnDeviceRecognition to be set to true or it would not work
+    // When I uninstalled en-US, it being true and false both worked
+    // This will probably be an issue again when I implement offline mode
+    // For some reason, the tts volume is a lot quieter when requiresOnDeviceRecognition is false
+
+    // If platform is IOS, then require on device recognition
+    let requiresOnDeviceRecognition = Platform.OS === "ios";
+
+    // If platform is android, then check if user has en-US installed, and if they do, require on device, if not, false
+    if (Platform.OS === "android") {
+      try {
+        const supportedLocales = await getSupportedLocales({
+          androidRecognitionServicePackage: "com.google.android.as",
+        });
+
+        // Check if en-US is in the installed locales
+        requiresOnDeviceRecognition = supportedLocales.installedLocales.includes("en-US");
+      } catch (error) {
+        console.error("Error getting supported locales:", error);
+        requiresOnDeviceRecognition = false;
+      }
+    }
+
     // Start speech recognition
     ExpoSpeechRecognitionModule.start({
       lang: "en-US",
-      interimResults: true,
       maxAlternatives: 1,
-      requiresOnDeviceRecognition: true,
+      requiresOnDeviceRecognition,
     });
   };
 
@@ -292,6 +316,7 @@ export default function App() {
         style={[styles.container, { backgroundColor: bgColor }]}
         // Starts listening on first tap
         onPressIn={async () => {
+          // Checks if the tts is currently speaking
           const isSpeaking = await textToSpeech.isSpeakingAsync();
 
           // Resets transcript back to ""
