@@ -3,7 +3,7 @@
 A companion app for the trading card game Magic: The Gathering that allows users to look up cards, track health, and roll dice using speech inputs rather than visual inputs. Designed with the visually impaired in mind, it uses text-to-speech and basic primary colors for better visibility.
 
 ### Breakdown YouTube Video
-[![YouTube Video Thumbnail](https://img.youtube.com/vi/H1stF6tCJJc/maxresdefault.jpg)](https://www.youtube.com/watch?v=H1stF6tCJJc)
+[![YouTube Video Thumbnail](https://img.youtube.com/vi/kcLFb18sB7I/maxresdefault.jpg)](https://www.youtube.com/watch?v=kcLFb18sB7I)
 
 ## Inspiration
 I was first inspired to make BlindMTG after watching a video on how blind and visually impaired people play Magic: The Gathering. The person in the video explained that he used a [Perkins Brailler](https://en.wikipedia.org/wiki/Perkins_Brailler) to add the card name (often abbreviated), mana cost, and card type to the card sleeve. That was the most information he could include on his cards because of space limitations, so knowing what any given card did was left to memory or having a sighted person read it to him.
